@@ -1,12 +1,19 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // Add this line
+const path = require('path');
 const app = express();
+
+app.use(express.static('public'));
+
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 
 // Replace with your actual MongoDB URI
 const mongoDBUri = 'mongodb+srv://subscriptions:bassandg@moodytunesdays.yawrta5.mongodb.net/?retryWrites=true&w=majority';
 
-mongoose.connect(mongoDBUri);
-
+mongoose.connect(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 mongoose.connection.on('connected', () => {
     console.log('Connected to MongoDB');
@@ -16,16 +23,12 @@ mongoose.connection.on('error', (err) => {
     console.error(`Error connecting to MongoDB: ${err}`);
 });
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
 
-const MoodEntry = require('./models/moodentry'); // Adjust the path if necessary
+const MoodEntry = require('./models/moodentry');
 
 app.get('/test-db', async (req, res) => {
     try {
