@@ -1,19 +1,16 @@
 const express = require('express');
-const mongoose = require('mongoose'); // Add this line
+const mongoose = require('mongoose');
 const path = require('path');
 const app = express();
 
-app.use(express.static('public'));
+// Correct the path to the songs.json file
+const songs = require('./data/songs.json'); // Assuming songs.json is in the data directory
 
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-
-// Replace with your actual MongoDB URI
+// MongoDB URI - replace with your actual MongoDB URI
 const mongoDBUri = 'mongodb+srv://subscriptions:bassandg@moodytunesdays.yawrta5.mongodb.net/?retryWrites=true&w=majority';
 
-mongoose.connect(mongoDBUri, { useNewUrlParser: true, useUnifiedTopology: true });
+// Connect to MongoDB
+mongoose.connect(mongoDBUri);
 
 mongoose.connection.on('connected', () => {
     console.log('Connected to MongoDB');
@@ -23,13 +20,27 @@ mongoose.connection.on('error', (err) => {
     console.error(`Error connecting to MongoDB: ${err}`);
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Serve static files from the 'public' directory
+app.use(express.static('public'));
+
+// Serve the main page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const MoodEntry = require('./models/moodentry');
+// Endpoint to get song data based on mood
+app.get('/song/:mood', (req, res) => {
+    const mood = req.params.mood;
+    const song = songs[mood];
+    if (song) {
+        res.json(song);
+    } else {
+        res.status(404).send('Song not found for this mood');
+    }
+});
 
+// Endpoint for testing MongoDB database connection
+const MoodEntry = require('./models/moodentry');
 app.get('/test-db', async (req, res) => {
     try {
         const newEntry = new MoodEntry({
@@ -46,3 +57,8 @@ app.get('/test-db', async (req, res) => {
     }
 });
 
+// Start the server
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
