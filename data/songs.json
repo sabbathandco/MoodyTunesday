@@ -1,0 +1,32 @@
+{
+    "angry": {
+        "title": "Truth Hurts",
+        "artist": "Lizzo",
+        "url": "/music/TruthHurts.mp3",
+        "artwork": "/artwork/Lizzo.jpeg"
+    },
+    "surprised": {
+        "title": "Truth Hurts",
+        "artist": "Lizzo",
+        "url": "/music/TruthHurts.mp3",
+        "artwork": "/artwork/Lizzo.jpeg"
+    },
+    "sad": {
+        "title": "no tears left to cry",
+        "artist": "Ariana Grande",
+        "url": "/music/NoTearsLefttoCry.mp3",
+        "artwork": "/artwork/ArianaGrande.png"
+    },
+    "fearful": {
+        "title": "no tears left to cry",
+        "artist": "Ariana Grande",
+        "url": "/music/NoTearsLefttoCry.mp3",
+        "artwork": "/artwork/ArianaGrande.png"
+    },
+    "happy": {
+        "title": "Cruel Summer",
+        "artist": "Taylor Swift",
+        "url": "/music/cruelsummer.mp3",
+        "artwork": "/artwork/TaylorSwift.png"
+    }
+}
