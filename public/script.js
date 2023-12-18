@@ -1,3 +1,4 @@
+// Define variables for managing mood, timestamps, song playback state, and media elements
 let currentMood = null;
 let moodDetectionTimestamp = null;
 let songPlaybackTimestamp = null;
@@ -6,10 +7,12 @@ let audio = new Audio();
 let canvas;
 let displaySize;
 
+// Constants for time durations and countdown
 const emotionDetectionPeriod = 3000; // 3 seconds
-const songPlaybackDuration = 30000; // 30 seconds
-const countdownStart = 10000; // 10 seconds before the song ends
+const songPlaybackDuration = 15000; // 15 seconds
+const countdownStart = 5000; // 10 seconds before the song ends
 
+// Get HTML elements for video and messages
 const video = document.getElementById('video');
 const sensingMessage = document.getElementById('sensingMessage');
 const promptMessage = document.getElementById('promptMessage');
@@ -20,6 +23,7 @@ const songInfo = {
     mood: document.getElementById('detectedMood')
 };
 
+// Load face detection models and start the video once loaded
 Promise.all([
     faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
     faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
@@ -27,6 +31,7 @@ Promise.all([
     faceapi.nets.faceExpressionNet.loadFromUri('/models')
 ]).then(startVideo);
 
+// Function to start the video stream and update the display size
 function startVideo() {
     navigator.mediaDevices.getUserMedia({ video: {} })
         .then(stream => {
@@ -39,6 +44,7 @@ function startVideo() {
         .catch(err => console.error(err));
 }
 
+// Update the display size for face detection
 function updateDisplaySize() {
     displaySize = { width: video.offsetWidth, height: video.offsetHeight };
     if (canvas) {
@@ -46,6 +52,7 @@ function updateDisplaySize() {
     }
 }
 
+// Add an event listener to the video for face detection and mood analysis
 video.addEventListener('play', () => {
     const videoContainer = document.getElementById('videoContainer');
     if (!canvas) {
@@ -55,27 +62,33 @@ video.addEventListener('play', () => {
     updateDisplaySize();
 
     setInterval(async () => {
+        // Stop song if it's playing longer than its duration
         if (isSongPlaying && (Date.now() - songPlaybackTimestamp) >= songPlaybackDuration) {
             stopSong();
             resetMoodDetection();
         }
 
+        // Detect mood every emotionDetectionPeriod if no song is playing
         if (!isSongPlaying && (Date.now() - moodDetectionTimestamp) >= emotionDetectionPeriod) {
             if (sensingMessage) {
                 sensingMessage.style.display = 'none';
             }
+            // Detect faces and expressions
             const detections = await faceapi.detectAllFaces(video, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
             const resizedDetections = faceapi.resizeResults(detections, displaySize);
+            // Clear the canvas and draw detections
             canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
             faceapi.draw.drawDetections(canvas, resizedDetections);
             faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
             faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 
+            // Determine and handle the dominant mood
             currentMood = determineDominantMood(resizedDetections);
             songInfo.mood.textContent = `Detected Mood: ${currentMood || 'None'}`; // Update the mood display
             handleEmotionDetection(currentMood);
         }
 
+        // Update countdown message when song nears its end
         if (isSongPlaying && (Date.now() - songPlaybackTimestamp) >= (songPlaybackDuration - countdownStart)) {
             let remainingTime = Math.ceil((songPlaybackDuration - (Date.now() - songPlaybackTimestamp)) / 1000);
             countdownMessage.textContent = `Will capture feels again in ${remainingTime}...`;
@@ -83,6 +96,7 @@ video.addEventListener('play', () => {
     }, 100);
 });
 
+// Function to determine the dominant mood from face detections
 function determineDominantMood(detections) {
     if (!detections.length || !detections[0].expressions) {
         return null;
@@ -98,6 +112,7 @@ function determineDominantMood(detections) {
     return maxEmotion;
 }
 
+// Handle the detected mood and prompt user if mood is neutral
 function handleEmotionDetection(mood) {
     if (mood === 'neutral') {
         promptUserForEmotion();
@@ -106,6 +121,7 @@ function handleEmotionDetection(mood) {
     }
 }
 
+// Prompt the user to express an emotion if mood is neutral
 function promptUserForEmotion() {
     promptMessage.textContent = "Music can only play if you express emotion. Please express an emotion!";
     promptMessage.style.display = 'block';
@@ -115,6 +131,7 @@ function promptUserForEmotion() {
     }, 5000);
 }
 
+// Update song information based on mood and start playback
 function updateSongInfo(mood) {
     if (!mood) {
         // Handle no mood or 'neutral' mood
@@ -123,6 +140,7 @@ function updateSongInfo(mood) {
     if (audio && !audio.paused) {
         return;
     }
+    // Fetch a song based on the detected mood
     fetch(`/song/${mood}`)
         .then(response => {
             if (!response.ok) {
@@ -131,6 +149,7 @@ function updateSongInfo(mood) {
             return response.json();
         })
         .then(song => {
+            // Play the song and update the UI
             audio.src = song.url;
             audio.play();
             songPlaybackTimestamp = Date.now();
@@ -144,7 +163,7 @@ function updateSongInfo(mood) {
         })
         .catch(error => {
             console.error('Error fetching song info:', error);
-            // Handle the case when a song is not found for the detected mood
+            // Prompt the user if no song is found for the mood
             promptMessage.textContent = "No song found for this mood, try expressing a different emotion!";
             promptMessage.style.display = 'block';
             setTimeout(() => {
@@ -154,6 +173,7 @@ function updateSongInfo(mood) {
         });
 }
 
+// Function to stop song playback
 function stopSong() {
     if (audio) {
         audio.pause();
@@ -166,6 +186,7 @@ function stopSong() {
     }
 }
 
+// Reset mood detection state
 function resetMoodDetection() {
     moodDetectionTimestamp = Date.now();
     currentMood = null;

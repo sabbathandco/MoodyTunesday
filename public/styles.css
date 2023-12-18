@@ -1,73 +1,81 @@
+/* Global styles for body and html */
 body, html {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
-    font-family: Arial, sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    font-family: Arial, sans-serif; /* Set default font */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center children horizontally */
 }
 
+/* Styling for the container that holds song and mood information */
 #infoContainer {
-    text-align: center;
-    margin-bottom: 20px;
+    text-align: center; /* Center text inside the container */
+    margin-bottom: 20px; /* Space below the container */
 }
 
+/* Styling for the song artwork image */
 #songInfo img {
-    width: 100px;
-    height: 100px;
+    width: 100px; /* Set image width */
+    height: 100px; /* Set image height */
 }
 
+/* Common styling for paragraphs and messages inside #infoContainer */
 #songInfo p, #sensingMessage, #promptMessage, #countdownMessage {
-    margin: 5px 0;
-    font-size: 16px;
+    margin: 5px 0; /* Vertical margin for spacing */
+    font-size: 16px; /* Font size */
 }
 
+/* Styling for the video container */
 #videoContainer {
-    position: relative;
-    width: 720px;
-    height: 560px;
+    position: relative; /* Set position context for absolute positioning of children */
+    width: 720px; /* Width of the container */
+    height: 560px; /* Height of the container */
 }
 
+/* Styling for video and canvas elements inside #videoContainer */
 #videoContainer video, #videoContainer canvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute; /* Position absolutely inside the container */
+    top: 0; /* Align to the top */
+    left: 0; /* Align to the left */
+    width: 100%; /* Full width of the container */
+    height: 100%; /* Full height of the container */
 }
 
+/* Styling for the animated background */
 .animated-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
-    animation: gradientAnimation 15s ease infinite;
-    background-size: 300% 300%;
+    position: fixed; /* Fixed position */
+    top: 0; /* Align to the top of the viewport */
+    left: 0; /* Align to the left of the viewport */
+    width: 100%; /* Full width of the viewport */
+    height: 100%; /* Full height of the viewport */
+    z-index: -1; /* Place it behind other elements */
+    animation: gradientAnimation 15s ease infinite; /* Apply the gradient animation */
+    background-size: 300% 300%; /* Set the size of the gradient background */
 }
 
+/* Keyframes for the gradient animation */
 @keyframes gradientAnimation {
     0% { background-position: 0% 50%; }
     50% { background-position: 100% 50%; }
     100% { background-position: 0% 50%; }
 }
 
-/* Mood-specific gradient styles */
+/* Mood-specific gradient background styles */
 .angry {
-    background-image: linear-gradient(45deg, #ff6b6b, #ffcccb);
+    background-image: linear-gradient(45deg, #ff6b6b, #ffcccb); /* Gradient for 'angry' mood */
 }
 .surprised {
-    background-image: linear-gradient(45deg, #f0f321, #e2ed39);
+    background-image: linear-gradient(45deg, #f0f321, #e2ed39); /* Gradient for 'surprised' mood */
 }
 .sad {
-    background-image: linear-gradient(45deg, #83a4d4, #b6fbff);
+    background-image: linear-gradient(45deg, #83a4d4, #b6fbff); /* Gradient for 'sad' mood */
 }
 .fearful {
-    background-image: linear-gradient(45deg, #575683, #709fb0);
+    background-image: linear-gradient(45deg, #575683, #709fb0); /* Gradient for 'fearful' mood */
 }
 .happy {
-    background-image: linear-gradient(45deg, #a1ffce, #faffd1);
+    background-image: linear-gradient(45deg, #a1ffce, #faffd1); /* Gradient for 'happy' mood */
 }
