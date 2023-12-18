@@ -25,6 +25,8 @@ Promise.all([
     faceapi.nets.faceExpressionNet.loadFromUri('/models')
 ]).then(startVideo);
 
+
+
 function startVideo() {
     navigator.mediaDevices.getUserMedia({ video: {} })
         .then(stream => video.srcObject = stream)
@@ -36,8 +38,9 @@ function startVideo() {
 }
 
 video.addEventListener('play', () => {
+    const videoContainer = document.getElementById('videoContainer');
     const canvas = faceapi.createCanvasFromMedia(video);
-    document.body.append(canvas);
+    videoContainer.appendChild(canvas); // Append canvas to the video container
     const displaySize = { width: video.width, height: video.height };
     faceapi.matchDimensions(canvas, displaySize);
 
