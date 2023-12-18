@@ -9,8 +9,8 @@ let displaySize;
 
 // Constants for time durations and countdown
 const emotionDetectionPeriod = 3000; // 3 seconds
-const songPlaybackDuration = 15000; // 15 seconds
-const countdownStart = 5000; // 10 seconds before the song ends
+const songPlaybackDuration = 10000; // 10 seconds
+const countdownStart = 5000; // 5 seconds before the song ends
 
 // Get HTML elements for video and messages
 const video = document.getElementById('video');
