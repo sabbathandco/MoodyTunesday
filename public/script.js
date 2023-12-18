@@ -8,10 +8,11 @@ let displaySize;
 
 const emotionDetectionPeriod = 3000; // 3 seconds
 const songPlaybackDuration = 30000; // 30 seconds
-const countdownStart = 10000; // Start countdown 10 seconds before the song ends
+const countdownStart = 10000; // 10 seconds before the song ends
 
 const video = document.getElementById('video');
 const sensingMessage = document.getElementById('sensingMessage');
+const promptMessage = document.getElementById('promptMessage');
 const countdownMessage = document.getElementById('countdownMessage');
 const songInfo = {
     title: document.getElementById('songTitle'),
@@ -70,12 +71,9 @@ video.addEventListener('play', () => {
             faceapi.draw.drawFaceLandmarks(canvas, resizedDetections);
             faceapi.draw.drawFaceExpressions(canvas, resizedDetections);
 
-            if (!currentMood) {
-                currentMood = determineDominantMood(resizedDetections);
-                songInfo.mood.textContent = `Detected Mood: ${currentMood}`;
-                updateSongInfo(currentMood);
-                songPlaybackTimestamp = Date.now();
-            }
+            currentMood = determineDominantMood(resizedDetections);
+            songInfo.mood.textContent = `Detected Mood: ${currentMood || 'None'}`; // Update the mood display
+            handleEmotionDetection(currentMood);
         }
 
         if (isSongPlaying && (Date.now() - songPlaybackTimestamp) >= (songPlaybackDuration - countdownStart)) {
@@ -100,12 +98,38 @@ function determineDominantMood(detections) {
     return maxEmotion;
 }
 
+function handleEmotionDetection(mood) {
+    if (mood === 'neutral') {
+        promptUserForEmotion();
+    } else {
+        updateSongInfo(mood);
+    }
+}
+
+function promptUserForEmotion() {
+    promptMessage.textContent = "Music can only play if you express emotion. Please express an emotion!";
+    promptMessage.style.display = 'block';
+    setTimeout(() => {
+        promptMessage.style.display = 'none';
+        resetMoodDetection();
+    }, 5000);
+}
+
 function updateSongInfo(mood) {
+    if (!mood) {
+        // Handle no mood or 'neutral' mood
+        return;
+    }
     if (audio && !audio.paused) {
         return;
     }
     fetch(`/song/${mood}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Song not found for this mood');
+            }
+            return response.json();
+        })
         .then(song => {
             audio.src = song.url;
             audio.play();
@@ -118,7 +142,16 @@ function updateSongInfo(mood) {
             const background = document.getElementById('animatedBackground');
             background.className = `animated-background ${mood}`;
         })
-        .catch(error => console.error('Error fetching song info:', error));
+        .catch(error => {
+            console.error('Error fetching song info:', error);
+            // Handle the case when a song is not found for the detected mood
+            promptMessage.textContent = "No song found for this mood, try expressing a different emotion!";
+            promptMessage.style.display = 'block';
+            setTimeout(() => {
+                promptMessage.style.display = 'none';
+                resetMoodDetection();
+            }, 5000);
+        });
 }
 
 function stopSong() {
