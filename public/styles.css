@@ -14,6 +14,7 @@ body, html {
 #infoContainer {
     text-align: center; /* Center text inside the container */
     margin-bottom: 20px; /* Space below the container */
+    padding-top: 2%; /* 2% vertical cushion at the top */
 }
 
 /* Styling for the song artwork image */
@@ -23,9 +24,16 @@ body, html {
 }
 
 /* Common styling for paragraphs and messages inside #infoContainer */
-#songInfo p, #sensingMessage, #promptMessage, #countdownMessage {
+#songInfo p, #sensingMessage, #promptMessage {
     margin: 5px 0; /* Vertical margin for spacing */
     font-size: 16px; /* Font size */
+}
+
+/* Styling for the countdown message - now bold */
+#countdownMessage {
+    margin: 5px 0; /* Vertical margin for spacing */
+    font-size: 16px; /* Font size */
+    font-weight: bold; /* Make the countdown text bold */
 }
 
 /* Styling for the video container */

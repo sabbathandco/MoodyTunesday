@@ -123,7 +123,7 @@ function handleEmotionDetection(mood) {
 
 // Prompt the user to express an emotion if mood is neutral
 function promptUserForEmotion() {
-    promptMessage.textContent = "Music can only play if you express emotion. Please express an emotion!";
+    promptMessage.textContent = "Music can only play if you express emotion for 3 secs. Please express an emotion!";
     promptMessage.style.display = 'block';
     setTimeout(() => {
         promptMessage.style.display = 'none';
