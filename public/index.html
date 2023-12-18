@@ -7,38 +7,21 @@
     <title>Moody Tunesdays</title>
     <script defer src="face-api.min.js"></script>
     <script defer src="script.js"></script>
-    <style>
-      body {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      #videoContainer {
-        position: relative;
-        width: 720px; /* Match the video width */
-        height: 560px; /* Match the video height */
-      }
-      video, canvas {
-        position: absolute;
-        top: 0;
-        left: 0;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="animatedBackground" class="animated-background"></div>
+    <div id="infoContainer">
+        <div id="songInfo">
+            <img id="songArtwork" src="" alt="Song Artwork">
+            <p id="songTitle"></p>
+            <p id="detectedMood">Detected Mood: None</p>
+        </div>
+        <div id="sensingMessage" style="display: none;">Sensing emotions...</div>
+        <div id="countdownMessage"></div>
+    </div>
     <div id="videoContainer">
-        <video id="video" width="720" height="560" autoplay muted></video>
+        <video id="video" autoplay muted></video>
     </div>
-    <div id="songInfo">
-        <img id="songArtwork" src="" alt="Song Artwork" style="width: 100px; height: 100px;">
-        <p id="songTitle">Song Title</p>
-        <p id="songArtist">Song Artist</p>
-        <p id="detectedMood">Detected Mood: None</p>
-    </div>
-    <div id="sensingMessage" style="display: none;">Sensing emotions...</div>
-    <div id="countdownMessage"></div>
 </body>
 </html>

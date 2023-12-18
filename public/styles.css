@@ -1,0 +1,73 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#infoContainer {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#songInfo img {
+    width: 100px;
+    height: 100px;
+}
+
+#songInfo p, #sensingMessage, #countdownMessage {
+    margin: 5px 0;
+    font-size: 16px;
+}
+
+#videoContainer {
+    position: relative;
+    width: 720px;
+    height: 560px;
+}
+
+#videoContainer video, #videoContainer canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.animated-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    animation: gradientAnimation 15s ease infinite;
+    background-size: 300% 300%;
+}
+
+@keyframes gradientAnimation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Mood-specific gradient styles */
+.angry {
+    background-image: linear-gradient(45deg, #ff6b6b, #ffcccb);
+}
+.surprised {
+    background-image: linear-gradient(45deg, #f0f321, #e2ed39);
+}
+.sad {
+    background-image: linear-gradient(45deg, #83a4d4, #b6fbff);
+}
+.fearful {
+    background-image: linear-gradient(45deg, #575683, #709fb0);
+}
+.happy {
+    background-image: linear-gradient(45deg, #a1ffce, #faffd1);
+}

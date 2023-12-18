@@ -3,6 +3,8 @@ let moodDetectionTimestamp = null;
 let songPlaybackTimestamp = null;
 let isSongPlaying = false;
 let audio = new Audio();
+let canvas;
+let displaySize;
 
 const emotionDetectionPeriod = 3000; // 3 seconds
 const songPlaybackDuration = 30000; // 30 seconds
@@ -13,7 +15,6 @@ const sensingMessage = document.getElementById('sensingMessage');
 const countdownMessage = document.getElementById('countdownMessage');
 const songInfo = {
     title: document.getElementById('songTitle'),
-    artist: document.getElementById('songArtist'),
     artwork: document.getElementById('songArtwork'),
     mood: document.getElementById('detectedMood')
 };
@@ -25,24 +26,32 @@ Promise.all([
     faceapi.nets.faceExpressionNet.loadFromUri('/models')
 ]).then(startVideo);
 
-
-
 function startVideo() {
     navigator.mediaDevices.getUserMedia({ video: {} })
-        .then(stream => video.srcObject = stream)
+        .then(stream => {
+            video.srcObject = stream;
+            video.onloadedmetadata = () => {
+                video.play();
+                updateDisplaySize();
+            };
+        })
         .catch(err => console.error(err));
-    moodDetectionTimestamp = Date.now();
-    if (sensingMessage) {
-        sensingMessage.style.display = 'block';
+}
+
+function updateDisplaySize() {
+    displaySize = { width: video.offsetWidth, height: video.offsetHeight };
+    if (canvas) {
+        faceapi.matchDimensions(canvas, displaySize);
     }
 }
 
 video.addEventListener('play', () => {
     const videoContainer = document.getElementById('videoContainer');
-    const canvas = faceapi.createCanvasFromMedia(video);
-    videoContainer.appendChild(canvas); // Append canvas to the video container
-    const displaySize = { width: video.width, height: video.height };
-    faceapi.matchDimensions(canvas, displaySize);
+    if (!canvas) {
+        canvas = faceapi.createCanvasFromMedia(video);
+        videoContainer.appendChild(canvas);
+    }
+    updateDisplaySize();
 
     setInterval(async () => {
         if (isSongPlaying && (Date.now() - songPlaybackTimestamp) >= songPlaybackDuration) {
@@ -104,10 +113,10 @@ function updateSongInfo(mood) {
             isSongPlaying = true;
 
             songInfo.title.textContent = `${song.artist} - ${song.title}`;
-            songInfo.artist.textContent = song.artist;
             songInfo.artwork.src = song.artwork;
 
-            setTimeout(stopSong, songPlaybackDuration);
+            const background = document.getElementById('animatedBackground');
+            background.className = `animated-background ${mood}`;
         })
         .catch(error => console.error('Error fetching song info:', error));
 }
