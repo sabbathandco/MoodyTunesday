@@ -20,6 +20,10 @@
     ],
     "rewrites": [
       {
+        "source": "/song/*",
+        "function": "app"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

@@ -23,6 +23,13 @@ const songInfo = {
     mood: document.getElementById('detectedMood')
 };
 
+// Add Firebase configuration
+const firebaseConfig = {
+    // Your Firebase configuration
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  
 // Load face detection models and start the video once loaded
 Promise.all([
     faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
@@ -133,52 +140,42 @@ function promptUserForEmotion() {
 
 // Update song information based on mood and start playback
 function updateSongInfo(mood) {
-    if (!mood) {
-        // Handle no mood or 'neutral' mood
+    if (!mood || (audio && !audio.paused)) {
         return;
     }
-    if (audio && !audio.paused) {
-        return;
-    }
-    // Fetch a song based on the detected mood
-    function updateSongInfo(mood) {
-        if (!mood || (audio && !audio.paused)) {
-            return;
-        }
-    
-        fetch(`/song/${mood}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Song not found for this mood');
-                }
-                return response.json();
-            })
-            .then(song => {
-                audio.src = song.url; // URL from Firebase Storage
-                audio.play();
-                songPlaybackTimestamp = Date.now();
-                isSongPlaying = true;
-    
-                songInfo.title.textContent = `${song.artist} - ${song.title}`;
-                songInfo.artwork.src = song.artwork; // URL from Firebase Storage
-    
-                const background = document.getElementById('animatedBackground');
-                background.className = `animated-background ${mood}`;
-            })
-            .catch(error => {
-                console.error('Error fetching song info:', error);
-                promptUserForNoSongFound();
-            });
-    }
-    
-    function promptUserForNoSongFound() {
-        promptMessage.textContent = "No song found for this mood, try expressing a different emotion!";
-        promptMessage.style.display = 'block';
-        setTimeout(() => {
-            promptMessage.style.display = 'none';
-            resetMoodDetection();
-        }, 5000);
-    }
+
+    fetch(`https://us-central1-moody-tunesdays.cloudfunctions.net/app/song/${mood}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Song not found for this mood');
+            }
+            return response.json();
+        })
+        .then(song => {
+            audio.src = song.url; // URL from Firebase Storage
+            audio.play();
+            songPlaybackTimestamp = Date.now();
+            isSongPlaying = true;
+
+            songInfo.title.textContent = `${song.artist} - ${song.title}`;
+            songInfo.artwork.src = song.artwork; // URL from Firebase Storage
+
+            const background = document.getElementById('animatedBackground');
+            background.className = `animated-background ${mood}`;
+        })
+        .catch(error => {
+            console.error('Error fetching song info:', error);
+            promptUserForNoSongFound();
+        });
+}
+
+function promptUserForNoSongFound() {
+    promptMessage.textContent = "No song found for this mood, try expressing a different emotion!";
+    promptMessage.style.display = 'block';
+    setTimeout(() => {
+        promptMessage.style.display = 'none';
+        resetMoodDetection();
+    }, 5000);
 }
 
 // Function to stop song playback
