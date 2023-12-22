@@ -141,36 +141,44 @@ function updateSongInfo(mood) {
         return;
     }
     // Fetch a song based on the detected mood
-    fetch(`/song/${mood}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Song not found for this mood');
-            }
-            return response.json();
-        })
-        .then(song => {
-            // Play the song and update the UI
-            audio.src = song.url;
-            audio.play();
-            songPlaybackTimestamp = Date.now();
-            isSongPlaying = true;
-
-            songInfo.title.textContent = `${song.artist} - ${song.title}`;
-            songInfo.artwork.src = song.artwork;
-
-            const background = document.getElementById('animatedBackground');
-            background.className = `animated-background ${mood}`;
-        })
-        .catch(error => {
-            console.error('Error fetching song info:', error);
-            // Prompt the user if no song is found for the mood
-            promptMessage.textContent = "No song found for this mood, try expressing a different emotion!";
-            promptMessage.style.display = 'block';
-            setTimeout(() => {
-                promptMessage.style.display = 'none';
-                resetMoodDetection();
-            }, 5000);
-        });
+    function updateSongInfo(mood) {
+        if (!mood || (audio && !audio.paused)) {
+            return;
+        }
+    
+        fetch(`/song/${mood}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Song not found for this mood');
+                }
+                return response.json();
+            })
+            .then(song => {
+                audio.src = song.url; // URL from Firebase Storage
+                audio.play();
+                songPlaybackTimestamp = Date.now();
+                isSongPlaying = true;
+    
+                songInfo.title.textContent = `${song.artist} - ${song.title}`;
+                songInfo.artwork.src = song.artwork; // URL from Firebase Storage
+    
+                const background = document.getElementById('animatedBackground');
+                background.className = `animated-background ${mood}`;
+            })
+            .catch(error => {
+                console.error('Error fetching song info:', error);
+                promptUserForNoSongFound();
+            });
+    }
+    
+    function promptUserForNoSongFound() {
+        promptMessage.textContent = "No song found for this mood, try expressing a different emotion!";
+        promptMessage.style.display = 'block';
+        setTimeout(() => {
+            promptMessage.style.display = 'none';
+            resetMoodDetection();
+        }, 5000);
+    }
 }
 
 // Function to stop song playback

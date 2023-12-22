@@ -2,31 +2,31 @@
     "angry": {
         "title": "Truth Hurts",
         "artist": "Lizzo",
-        "url": "/music/TruthHurts.mp3",
-        "artwork": "/artwork/Lizzo.jpeg"
+        "url": "gs://moody-tunesdays.appspot.com/Music/TruthHurts.mp3",
+        "artwork": "gs://moody-tunesdays.appspot.com/Artwork/Lizzo.jpeg"
     },
     "surprised": {
         "title": "Truth Hurts",
         "artist": "Lizzo",
-        "url": "/music/TruthHurts.mp3",
-        "artwork": "/artwork/Lizzo.jpeg"
+        "url": "gs://moody-tunesdays.appspot.com/Music/TruthHurts.mp3",
+        "artwork": "gs://moody-tunesdays.appspot.com/Artwork/Lizzo.jpeg"
     },
     "sad": {
         "title": "no tears left to cry",
         "artist": "Ariana Grande",
-        "url": "/music/NoTearsLefttoCry.mp3",
-        "artwork": "/artwork/ArianaGrande.png"
+        "url": "gs://moody-tunesdays.appspot.com/Music/NoTearsLefttoCry.mp3",
+        "artwork": "gs://moody-tunesdays.appspot.com/Artwork/ArianaGrande.png"
     },
     "fearful": {
         "title": "no tears left to cry",
         "artist": "Ariana Grande",
-        "url": "/music/NoTearsLefttoCry.mp3",
-        "artwork": "/artwork/ArianaGrande.png"
+        "url": "gs://moody-tunesdays.appspot.com/Music/NoTearsLefttoCry.mp3",
+        "artwork": "gs://moody-tunesdays.appspot.com/Artwork/ArianaGrande.png"
     },
     "happy": {
         "title": "Cruel Summer",
         "artist": "Taylor Swift",
-        "url": "/music/cruelsummer.mp3",
-        "artwork": "/artwork/TaylorSwift.png"
+        "url": "gs://moody-tunesdays.appspot.com/Music/cruelsummer.mp3",
+        "artwork": "gs://moody-tunesdays.appspot.com/Artwork/TaylorSwift.png"
     }
 }
