@@ -125,13 +125,33 @@ function determineDominantMood(detections) {
     return maxEmotion;
 }
 
-// Handle the detected mood and prompt user if mood is neutral
+// Add a new variable for countdown
+let countdownInterval;
+
+// Modify handleEmotionDetection function
 function handleEmotionDetection(mood) {
     if (mood === 'neutral') {
         promptUserForEmotion();
     } else {
+        isSongPlaying = true; // Set the song playing flag
+        songPlaybackTimestamp = Date.now(); // Set the song playback timestamp
         updateSongInfo(mood);
     }
+}
+
+// Function to handle countdown and song switching
+function handleCountdownAndSongSwitch() {
+    let remainingTime = countdownStart / 1000; // Convert to seconds
+
+    countdownInterval = setInterval(() => {
+        countdownMessage.textContent = `Will capture feels again in ${remainingTime}...`;
+        remainingTime--;
+
+        if (remainingTime < 0) {
+            clearInterval(countdownInterval);
+            resetMoodDetection();
+        }
+    }, 1000);
 }
 
 function updateSongInfo(mood) {
