@@ -25,10 +25,16 @@ const songInfo = {
 
 // Add Firebase configuration
 const firebaseConfig = {
-    // Your Firebase configuration
-  };
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
+    apiKey: "AIzaSyAeuwbXaHBTXHBQnnZPKrCvwgo28xznOVk",
+    authDomain: "moody-tunesdays.firebaseapp.com",
+    databaseURL: "https://moody-tunesdays-default-rtdb.firebaseio.com",
+    projectId: "moody-tunesdays",
+    storageBucket: "moody-tunesdays.appspot.com",
+    messagingSenderId: "135749127214",
+    appId: "1:135749127214:web:c89e35ec346d9ef36263bf",
+    measurementId: "G-4VQ6KJYSG3"
+};
+firebase.initializeApp(firebaseConfig);
   
 // Load face detection models and start the video once loaded
 Promise.all([
@@ -128,19 +134,10 @@ function handleEmotionDetection(mood) {
     }
 }
 
-// Prompt the user to express an emotion if mood is neutral
-function promptUserForEmotion() {
-    promptMessage.textContent = "Music can only play if you express emotion for 3 secs. Please express an emotion!";
-    promptMessage.style.display = 'block';
-    setTimeout(() => {
-        promptMessage.style.display = 'none';
-        resetMoodDetection();
-    }, 5000);
-}
-
-// Update song information based on mood and start playback
 function updateSongInfo(mood) {
+    console.log("Updating song info for mood:", mood);
     if (!mood || (audio && !audio.paused)) {
+        console.log("No mood detected or song is already playing");
         return;
     }
 
@@ -152,14 +149,19 @@ function updateSongInfo(mood) {
             return response.json();
         })
         .then(song => {
-            audio.src = song.url; // URL from Firebase Storage
+            console.log("Received song data:", song);
+
+            // Construct Firebase Storage URLs
+            const songUrl = `https://firebasestorage.googleapis.com/v0/b/moody-tunesdays.appspot.com/o/Music%2F${encodeURIComponent(song.url)}?alt=media`;
+            const artworkUrl = `https://firebasestorage.googleapis.com/v0/b/moody-tunesdays.appspot.com/o/Artwork%2F${encodeURIComponent(song.artwork)}?alt=media`;
+
+            // Set audio source and artwork
+            audio.src = songUrl;
             audio.play();
-            songPlaybackTimestamp = Date.now();
-            isSongPlaying = true;
-
             songInfo.title.textContent = `${song.artist} - ${song.title}`;
-            songInfo.artwork.src = song.artwork; // URL from Firebase Storage
+            songInfo.artwork.src = artworkUrl;
 
+            // Update the background class based on mood
             const background = document.getElementById('animatedBackground');
             background.className = `animated-background ${mood}`;
         })
@@ -177,6 +179,7 @@ function promptUserForNoSongFound() {
         resetMoodDetection();
     }, 5000);
 }
+
 
 // Function to stop song playback
 function stopSong() {
